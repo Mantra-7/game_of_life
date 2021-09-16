@@ -99,3 +99,5 @@ const transform = function() {
     arr = newarr
     show(arr)
 }
+
+//clear, setinterval
