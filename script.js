@@ -117,7 +117,7 @@ function Itr()
     {
         document.querySelector("#start").style.background="green";
         document.querySelector("#stop").style.background="rgb(73, 226, 43)";
-        clr = setInterval(transform,1000);
+        clr = setInterval(transform,400);
     }
 }
 
@@ -148,34 +148,97 @@ function setRC(){
     let nrow=document.querySelector("#row").value;
     let ncol=document.querySelector("#col").value;
 
-    nrow+=200;
-    ncol+=200;
+    let rnum=0;
+    let temp=1;
+    for(let i=nrow.length-1;i>=0;i--)
+    {
+        rnum+= (nrow[i]-'0')*temp;
+        temp*=10;
+    }
+    let cnum=0;
+    temp=1;
+    for(let i=ncol.length-1;i>=0;i--)
+    {
+        cnum+= (ncol[i]-'0')*temp;
+        temp*=10;
+    }
+    if(rnum==0) rnum=17;
+    if(cnum==0) cnum=33;
+    rnum+=200;
+    cnum+=200;
 
     let narr=[];
-    for(let i=0;i<nrow;i++)
+    for(let i=0;i<rnum;i++)
     {
         narr[i]=[];
-        for(let j=0;j<ncol;j++)
-        {
-            narr[i][j]=0;
-        }
     }
 
     rows+=200;
     cols+=200;
-    if(rows<nrow && cols<ncol)
+    if(rows<rnum)
     {
-        let st1=~~((nrow-rows)/2);
-        let st2=~~((ncol-cols)/2);
+        
+        let st1=~~((rnum-rows)/2);
         for(let i=st1;i<st1+rows;i++)
         {
-            for(let j=st2;j<st2+cols;j++)
+            for(let j=0;j<cols;j++)
             {
-                narr[i][j]=arr[i-st1][j-st2];
+                narr[i][j]=arr[i-st1][j];
             }
         }
+    }
+    else
+    {
+        let st1=~~((rows-rnum)/2);
+        for(let i=st1;i<st1+rnum;i++)
+        {
+            for(let j=0;j<cols;j++)
+            {
+                narr[i-st1][j]=arr[i][j];
+            }
+        }
+    }
 
-        for (let i = (rows-200)*(cols-200); i < (nrow-200)*(ncol-200); i++) {
+    let nnarr=[];
+    for(let i=0;i<rnum;i++)
+    {
+        nnarr[i]=[];
+        for(let j=0;j<cnum;j++)
+        {
+            nnarr[i][j]=0;
+        }
+    }
+
+    if(cols<cnum)
+    {
+        let st1=~~((cnum-cols)/2);
+        for(let j=st1;j<st1+cols;j++)
+        {
+            for(let i=0;i<rnum;i++)
+            {
+                nnarr[i][j]=narr[i][j-st1];
+            }
+        }
+    }
+    else
+    {
+        let st1=~~((cols-cnum)/2);
+        for(let j=st1;j<st1+cnum;j++)
+        {
+            for(let i=0;i<rnum;i++)
+            {
+                nnarr[i][j-st1]=narr[i][j];
+            }
+        }
+    }
+
+    rows-=200;
+    cols-=200;
+    rnum-=200;
+    cnum-=200;
+    if(rows*cols<rnum*cnum)
+    {
+        for (let i = rows*cols; i < rnum*cnum; i++) {
             var cfa = document.createElement('div');
             cfa.setAttribute('class', 'cell');
             cfa.setAttribute('id', i);
@@ -183,25 +246,34 @@ function setRC(){
         }
 
         let grid = document.getElementsByClassName('cell');
-        cells = Array.from(grid);
-        for(let i=(rows-200)*(cols-200);i<(nrow-200)*(ncol-200);i++)
+        for(let i=(rows)*(cols);i<(rnum)*(cnum);i++)
         {
             grid[i].addEventListener("click", () => clickHandler(grid[i]));
         }
-
-
-        rows=nrow-200;
-        cols=ncol-200;
-        arr=narr;
-        console.log(arr);
-
-
-        for(let i=0;i<grid.length;i++)
-        {
-            grid[i].style.width=((screen.width-17)/cols + "px");
-            grid[i].style.height=((screen.height-200)/rows + "px");
-        }
-                
-        show(arr);
     }
+    else
+    {
+        console.log("cheater");
+        let grid = document.getElementsByClassName('cell');
+        for(let i=rows*cols-1;i>=rnum*cnum;i--)
+        {
+            let ch=grid[i];
+            document.getElementsByClassName('grid')[0].removeChild(ch);
+        }
+    }
+    let grid = document.getElementsByClassName('cell');
+    cells = Array.from(grid);
+
+    rows=rnum;
+    cols=cnum;
+    arr=nnarr;
+
+    for(let i=0;i<grid.length;i++)
+    {
+        grid[i].style.width=((screen.width-17)/cols + "px");
+        grid[i].style.height=((screen.height-200)/rows + "px");
+    }
+            
+    show(arr);
+    
 }
