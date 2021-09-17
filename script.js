@@ -1,6 +1,5 @@
 let rows = 18
 let cols = 33
-let stop = 1
 
 var arr = []
 for (var i = 0; i < rows; i++) {
@@ -44,21 +43,6 @@ const clickHandler = function(cell) {
 
 }
 
-let stbutn = document.querySelector('#start')
-stbutn.addEventListener("click", () => setTimeout(nextItr(), 5000))
-
-let pabutn = document.querySelector('#stop')
-pabutn.addEventListener("click", () => changeStop())
-
-const changeStop = function() {
-    stop = 1 - stop
-}
-
-function calc(i, j) {
-    var x = arr[i - 1][j - 1] + arr[i - 1][j] + arr[i - 1][j + 1] + arr[i][j - 1] + arr[i][j + 1] + arr[i + 1][j - 1] + arr[i + 1][j] + arr[i + 1][j + 1];
-    return x;
-}
-
 function show(arr) {
     for (var index = 0; index <= 593; index++) {
         var i = ~~(index / cols)
@@ -70,11 +54,7 @@ function show(arr) {
     }
 }
 
-const nextItr = function() {
-    transform()
-}
-
-const transform = function() {
+function transform() {
     var newarr = []
     for (var i = 0; i < rows; i++) {
         newarr[i] = []
@@ -100,4 +80,51 @@ const transform = function() {
     show(arr)
 }
 
-//clear, setinterval
+let stbutn = document.querySelector('#start')
+stbutn.addEventListener("click", () => Itr())
+
+let pabutn = document.querySelector('#stop')
+document.querySelector("#stop").style.background="green";
+pabutn.addEventListener("click", () => Stop())
+
+let clbutn = document.querySelector('#clear')
+clbutn.addEventListener("click", () => Clear())
+
+function calc(i, j) {
+    var x = arr[i - 1][j - 1] + arr[i - 1][j] + arr[i - 1][j + 1] + arr[i][j - 1] + arr[i][j + 1] + arr[i + 1][j - 1] + arr[i + 1][j] + arr[i + 1][j + 1];
+    return x;
+}
+
+let clr;
+function Itr()
+{
+    let color=document.querySelector("#start").style.background;
+
+    if(color!="green")
+    {
+        document.querySelector("#start").style.background="green";
+        document.querySelector("#stop").style.background="rgb(73, 226, 43)";
+        clr = setInterval(transform,1000);
+    }
+}
+
+function Stop()
+{
+    let color=document.querySelector("#stop").style.background;
+    if(color!="green")
+    {
+        document.querySelector("#stop").style.background="green";
+        document.querySelector("#start").style.background="rgb(73, 226, 43)";
+        clearInterval(clr);
+    }
+}
+
+function Clear()
+{
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
+            arr[i][j] = 0
+        }
+    }
+    show(arr)
+}
