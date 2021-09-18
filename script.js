@@ -1,6 +1,6 @@
 let rows = 17;
-let cols = 33;
-
+let cols = 34;
+let gap = 1000;
 
 var arr = [];
 for (var i = 0; i < rows+200; i++) {
@@ -18,6 +18,7 @@ for (let i = 0; i < rows*cols; i++) {
 }
 
 let grid = document.getElementsByClassName('cell')
+grid[0].style.height=screen.height-400 + "px";
 const changeColor = function(cell) {
     if (cell.style.background === 'black') {
         cell.style.background = "white";
@@ -26,12 +27,15 @@ const changeColor = function(cell) {
     }
 }
 
-for(let i=0;i<grid.length;i++)
+function cellSize(cols,rows)
 {
-    grid[i].style.width=((screen.width-17)/cols + "px");
-    grid[i].style.height=((screen.height-200)/rows + "px");
-
+    for(let i=0;i<grid.length;i++)
+    {
+        grid[i].style.width=((screen.width-17)/cols + "px");
+        grid[i].style.height=((screen.height-200)/rows + "px");
+    }
 }
+cellSize(cols,rows);
 
 Array.from(grid).forEach(
     (cell) => {
@@ -117,7 +121,7 @@ function Itr()
     {
         document.querySelector("#start").style.background="green";
         document.querySelector("#stop").style.background="rgb(73, 226, 43)";
-        clr = setInterval(transform,400);
+        clr = setInterval(transform,gap);
     }
 }
 
@@ -142,30 +146,48 @@ function Clear()
     show(arr);
 }
 
-//change nrow from string to int
-
-function setRC(){
-    let nrow=document.querySelector("#row").value;
-    let ncol=document.querySelector("#col").value;
-
-    let rnum=0;
+function toInt(s)
+{
+    let num=0;
     let temp=1;
-    for(let i=nrow.length-1;i>=0;i--)
+    for(let i=s.length-1;i>=0;i--)
     {
-        rnum+= (nrow[i]-'0')*temp;
+        num+= (s[i]-'0')*temp;
         temp*=10;
     }
-    let cnum=0;
-    temp=1;
-    for(let i=ncol.length-1;i>=0;i--)
-    {
-        cnum+= (ncol[i]-'0')*temp;
-        temp*=10;
-    }
+    return num;
+}
+
+let rowslider = document.getElementById("row");
+let rowoutput = document.getElementById("rowval");
+rowoutput.innerHTML = rowslider.value;
+
+rowslider.oninput = function() {
+    rowoutput.innerHTML = this.value;
+    setR();
+}
+
+let colslider = document.getElementById("col");
+let coloutput = document.getElementById("colval");
+coloutput.innerHTML = colslider.value;
+
+colslider.oninput = function() {
+    coloutput.innerHTML = this.value;
+    setC();
+}
+
+let spslider = document.getElementById("speed");
+
+spslider.oninput = function() {
+    gap= 2100-this.value;
+}
+
+function setR(){
+    let nrow=document.querySelector("#row").value;
+
+    let rnum=toInt(nrow);
     if(rnum==0) rnum=17;
-    if(cnum==0) cnum=33;
     rnum+=200;
-    cnum+=200;
 
     let narr=[];
     for(let i=0;i<rnum;i++)
@@ -177,8 +199,8 @@ function setRC(){
     cols+=200;
     if(rows<rnum)
     {
-        
         let st1=~~((rnum-rows)/2);
+        if(rnum%2==0) st1++;
         for(let i=st1;i<st1+rows;i++)
         {
             for(let j=0;j<cols;j++)
@@ -190,6 +212,7 @@ function setRC(){
     else
     {
         let st1=~~((rows-rnum)/2);
+        if(rnum%2==1) st1++;
         for(let i=st1;i<st1+rnum;i++)
         {
             for(let j=0;j<cols;j++)
@@ -199,35 +222,91 @@ function setRC(){
         }
     }
 
-    let nnarr=[];
+    let cnum=cols;
+
+    rows-=200;
+    cols-=200;
+    rnum-=200;
+    cnum-=200;
+    if(rows*cols<rnum*cnum)
+    {
+        for (let i = rows*cols; i < rnum*cnum; i++) {
+            var cfa = document.createElement('div');
+            cfa.setAttribute('class', 'cell');
+            cfa.setAttribute('id', i);
+            document.getElementsByClassName("grid")[0].appendChild(cfa);
+        }
+
+        let grid = document.getElementsByClassName('cell');
+        for(let i=(rows)*(cols);i<(rnum)*(cnum);i++)
+        {
+            grid[i].addEventListener("click", () => clickHandler(grid[i]));
+        }
+    }
+    else
+    {
+        console.log("cheater");
+        let grid = document.getElementsByClassName('cell');
+        for(let i=rows*cols-1;i>=rnum*cnum;i--)
+        {
+            let ch=grid[i];
+            document.getElementsByClassName('grid')[0].removeChild(ch);
+        }
+    }
+    let grid = document.getElementsByClassName('cell');
+    cells = Array.from(grid);
+
+    rows=rnum;
+    cols=cnum;
+    arr=narr;
+
+    cellSize(cols,rows);
+    show(arr);
+}
+
+function setC(){
+    let ncol=document.querySelector("#col").value;
+
+    let cnum=toInt(ncol);
+
+    if(cnum==0) cnum=33;
+    cnum+=200;
+
+    rows+=200;
+    cols+=200;
+    let rnum=rows;
+
+    let narr=[];
     for(let i=0;i<rnum;i++)
     {
-        nnarr[i]=[];
+        narr[i]=[];
         for(let j=0;j<cnum;j++)
         {
-            nnarr[i][j]=0;
+            narr[i][j]=0;
         }
     }
 
     if(cols<cnum)
     {
         let st1=~~((cnum-cols)/2);
+        if(cnum%2==0) st1++;
         for(let j=st1;j<st1+cols;j++)
         {
             for(let i=0;i<rnum;i++)
             {
-                nnarr[i][j]=narr[i][j-st1];
+                narr[i][j]=arr[i][j-st1];
             }
         }
     }
     else
     {
         let st1=~~((cols-cnum)/2);
+        if(cnum%2==0) st1++;
         for(let j=st1;j<st1+cnum;j++)
         {
             for(let i=0;i<rnum;i++)
             {
-                nnarr[i][j-st1]=narr[i][j];
+                narr[i][j-st1]=arr[i][j];
             }
         }
     }
@@ -266,14 +345,14 @@ function setRC(){
 
     rows=rnum;
     cols=cnum;
-    arr=nnarr;
+    arr=narr;
 
-    for(let i=0;i<grid.length;i++)
-    {
-        grid[i].style.width=((screen.width-17)/cols + "px");
-        grid[i].style.height=((screen.height-200)/rows + "px");
-    }
-            
+    cellSize(cols,rows);
     show(arr);
-    
+}
+
+function setRC()
+{
+    setR();
+    setC();
 }

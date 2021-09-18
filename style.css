@@ -12,7 +12,7 @@
 
 .cell {
     background-color: #fff;
-    border: 2px solid rgb(166, 255, 0);
+    border: 1px solid rgb(166, 255, 0);
 }
 
 #buttons{
@@ -54,4 +54,8 @@ input{
     color:white;
     font-size: 30px;
     padding: 0;
+}
+
+.rangeslider{
+    transform: translateY(25%);
 }
