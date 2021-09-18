@@ -104,9 +104,6 @@ pabutn.addEventListener("click", () => Stop());
 let clbutn = document.querySelector('#clear');
 clbutn.addEventListener("click", () => Clear());
 
-let setbutn = document.querySelector('#set');
-setbutn.addEventListener("click", () => setRC());
-
 function calc(i, j) {
     var x = arr[i - 1][j - 1] + arr[i - 1][j] + arr[i - 1][j + 1] + arr[i][j - 1] + arr[i][j + 1] + arr[i + 1][j - 1] + arr[i + 1][j] + arr[i + 1][j + 1];
     return x;
