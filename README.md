@@ -23,5 +23,6 @@ Every cell has eight neighbours, which are the cells that are horizontally, vert
 3. Any live cell with more than three live neighbours dies, as if by overpopulation.
 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
+And you keep on doing iterations and intriguing shapes appear, try to find basic glider(a shape that keeps on going in one direction)!
 
 Link to webpage: https://mantra-7.github.io/game_of_life/
